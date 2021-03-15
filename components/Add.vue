@@ -15,7 +15,7 @@
                     required
                     :rules="nameRules"
                     :counter="10"
-                    v-model="itemObject.FirstName"
+                    v-model="childState.firstName"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
@@ -24,7 +24,7 @@
                     required
                     :rules="nameRules"
                     :counter="10"
-                    v-model="itemObject.LastName"
+                    v-model="childState.lastName"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -47,14 +47,13 @@
 
 <script>
 export default {
-  props: ["openModal", "itemObject", "itemArray"],
-
+  props: ["openModal","emptyField"],
   data() {
     return {
       valid: false,
-      itemObject: {
-        FirstName: "",
-        LastName: ""
+      childState: {
+        firstName: "",
+        lastName: ""
       },
       nameRules: [v => !!v || "Name is required"]
     };
@@ -65,7 +64,17 @@ export default {
     },
     saveInput() {
       if (this.$refs.form.validate()) {
-        this.$emit("saveItem", this.itemObject);
+        this.$emit("saveItem", this.childState);
+      }
+    }
+  },
+  watch:{
+    openModal(value){
+      if(value){
+        this.$refs.form.reset();
+        this.childState.firstName = '';
+        this.childState.lastName = '';
+
       }
     }
   }

@@ -3,14 +3,19 @@
     <v-btn color="primary" dark @click="openModal()">
       Open Modal
     </v-btn>
-    <v-row :align="align" no-gutters style="height:25px;"> </v-row>
+    <v-row align="center" no-gutters style="height:25px;"> </v-row>
 
     <Add
       :openModal="modalvalue"
       @closeModal="modalvalue = false"
-      :itemArray="itemArray"
-      :itemObject="itemObject"
-      @saveItem="save($event)"
+      @saveItem="save"
+
+    />
+    <Edit
+      :openModal="editModal"
+      :item="editArray"
+      @closeModal="editModal = false"
+      @edit="edit"
     />
 
     <v-simple-table>
@@ -24,24 +29,17 @@
           </th>
         </tr>
 
-        <tr v-for="(itemObject, i) in itemArray" :key="i">
-          <td>{{ itemObject.FirstName }}</td>
-          <td>{{ itemObject.LastName }}</td>
+        <tr v-for="(item, i) in itemObject" :key="i">
+          <td>{{ item.firstName}}</td>
+          <td>{{ item.lastName }}</td>
 
           <td>
-            <v-btn class="mx-2" fab dark small color="primary" @click="editMethod(itemObject)">
+            <v-btn class="mx-2" fab dark small color="primary" @click="editMethod(item)">
               <v-icon dark>
                 mdi-pencil
               </v-icon>
             </v-btn>
           </td>
-          <Edit
-            :openModal="modalvalue"
-            @closeModal="modalvalue = false"
-            :itemArray="itemArray"
-            :itemObject="itemObject"
-            @edit="edit($event)"
-          />
         </tr>
       </thead>
     </v-simple-table>
@@ -51,7 +49,7 @@
 <script>
 import Add from "@/components/Add.vue";
 import Edit from "@/components/edit.vue";
-
+import { makeId } from "@/utilities/makeId";
 export default {
   components: {
     Add,
@@ -60,26 +58,33 @@ export default {
   data() {
     return {
       modalvalue: false,
-
-      itemArray: [],
-      itemObject: { FirstName: "", LastName: "" }
+      editModal: false,
+      itemObject: [],
+      editArray : []
     };
   },
 
   methods: {
     openModal() {
       this.modalvalue = true;
-      
     },
-    save() {
-      this.itemArray.push(this.itemObject);
-      this.itemObject = {};
-
+    save(value) {
+      this.itemObject.push({
+        id: makeId(50),
+        firstName: value.firstName,
+        lastName: value.lastName 
+      });
       this.modalvalue = false;
     },
-    editMethod(itemObject) {
-      this.itemObject = itemObject;
-      this.modalvalue = true;
+    editMethod(item) {
+      this.editModal = true;
+      this.editArray = {...item};
+    },
+    edit(value){
+      this.editArray = [];
+      const index = this.itemObject.findIndex(item => item.id === value.id); 
+      this.itemObject.splice(index,1,value);
+      this.editModal = false;
     }
   }
 };

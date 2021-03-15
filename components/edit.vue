@@ -1,10 +1,10 @@
 <template>
   <div>
-    
+    <v-form v-model="valid" ref="form">
       <v-dialog v-model="openModal" persistent max-width="600px">
         <v-card>
           <v-card-title>
-            <span class="headline">User Profile</span>
+            <span class="headline">Edit User Profile</span>
           </v-card-title>
           <v-card-text>
             <v-container>
@@ -15,7 +15,7 @@
                     required
                     :rules="nameRules"
                     :counter="10"
-                    v-model="itemObject.FirstName"
+                    v-model="item.firstName"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12">
@@ -24,7 +24,7 @@
                     required
                     :rules="nameRules"
                     :counter="10"
-                    v-model="itemObject.LastName"
+                    v-model="item.lastName"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -41,32 +41,32 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-    
+    </v-form>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["openModal", "itemObject", "itemArray"],
+  props: ["openModal","item"],
 
   data() {
     return {
-      
-      itemObject: {
-        FirstName: "",
-        LastName: ""
-      },
-      
+      valid: false,
+      // editState: ,
+      nameRules: [v => !!v || "Name is required"]
     };
   },
   methods: {
     closeModal() {
       this.$emit("closeModal", false);
+      // this.$refs.form.reset();
+      // this.editState = {};
     },
     updateInput() {
-      this.$emit("edit", this.itemObject);
+      this.$emit("edit", this.item);
+      // this.$refs.form.reset();;
+      // this.editState = {};
     }
-   
-  }
+  },
 };
 </script>
